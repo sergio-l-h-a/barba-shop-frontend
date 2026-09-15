@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Barber, ServiceCatalog, Appointment } from '../types/barber';
 import { X, Calendar, Clock, User, Scissors, DollarSign, Check, Phone } from 'lucide-react';
+import { apiService } from '@/services/api';
 
 interface NewAppointmentModalProps {
   isOpen: boolean;
@@ -31,18 +32,34 @@ export const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({
   const selectedBarber = barbers.find((b) => b.id === selectedBarberId) || barbers[0];
   const selectedService = services.find((s) => s.id === selectedServiceId) || services[0];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!clientName.trim() || !clientPhone.trim()) return;
 
-    // Calculate end time
+    // calcular horário final
     const [h, m] = time.split(':').map(Number);
     const duration = selectedService.durationMinutes;
     const endMin = (m + duration) % 60;
     const endHour = h + Math.floor((m + duration) / 60);
     const endTime = `${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}`;
 
-    const newAppointment: Appointment = {
+    // salvar no banco
+    await apiService.createAgendamento({
+      clientName,
+      clientPhone,
+      clientIsVip: isVip,
+      time,
+      endTime,
+      service: selectedService.name,
+      servicePrice: selectedService.price,
+      barberId: selectedBarber.id,
+      notes,
+      paymentMethod
+    });
+
+    // opcional: manter também no estado local
+    onAddAppointment({
       id: `apt-${Date.now()}`,
       clientName,
       clientPhone,
@@ -57,15 +74,15 @@ export const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({
       status: 'aguardando',
       notes,
       paymentMethod
-    };
+    });
 
-    onAddAppointment(newAppointment);
     onClose();
-    // Reset form
+
     setClientName('');
     setClientPhone('');
     setNotes('');
   };
+
 
   return (
     <div className="fixed inset-0 z-50 bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
