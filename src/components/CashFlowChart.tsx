@@ -10,14 +10,16 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts';
-import { cashFlowDailyData, cashFlowMonthlyData } from '../data/mockData';
+import { useCashFlow } from '../hooks/useCashFlow';
+
 import { TrendingUp, Calendar, ArrowUpRight } from 'lucide-react';
 
 export const CashFlowChart: React.FC = () => {
   const [viewMode, setViewMode] = useState<'daily' | 'monthly'>('daily');
   const [showExpenses, setShowExpenses] = useState(false);
+  const { data, loading, error } = useCashFlow(viewMode);
 
-  const data = viewMode === 'daily' ? cashFlowDailyData : cashFlowMonthlyData;
+  //const data = viewMode === 'daily' ? cashFlowDailyData : cashFlowMonthlyData;
 
   const totalRealized = data.reduce((acc, cur) => acc + cur.realized, 0);
   const totalProjected = data.reduce((acc, cur) => acc + (cur.projected || cur.realized), 0);

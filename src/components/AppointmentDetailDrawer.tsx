@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Appointment, AppointmentStatus, ProductItem } from '../types/barber';
+import { Appointment, AppointmentStatus, ProductItem } from '../types/barber_new';
 import {
   X,
   User,
@@ -15,8 +15,8 @@ import {
 interface AppointmentDetailDrawerProps {
   appointment: Appointment | null;
   onClose: () => void;
-  onStatusChange: (id: string, status: AppointmentStatus) => void;
-  onAddProduct: (appointmentId: string, product: ProductItem) => void;
+  onStatusChange: (id: number, status: AppointmentStatus) => void;
+  onAddProduct: (appointmentId: number, product: ProductItem) => void;
   onNotifyWhatsApp: (appointment: Appointment) => void;
 }
 
@@ -57,7 +57,7 @@ export const AppointmentDetailDrawer: React.FC<AppointmentDetailDrawerProps> = (
               </div>
               <div>
                 <h3 className="text-base font-bold text-zinc-100">
-                  Comanda #{appointment.id.slice(-4)}
+                  Comanda #{appointment.id.toString().slice(-4)}
                 </h3>
                 <p className="text-xs text-zinc-400">
                   {appointment.time} &bull; {appointment.barberName}

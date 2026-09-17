@@ -1,4 +1,4 @@
-export type AppointmentStatus = 'ativo' | 'aguardando' | 'faltou' | 'concluido' | 'confirmado';
+export type AppointmentStatus = 'ativo' | 'aguardando' | 'faltou' | 'concluido' | 'pendente' | 'confirmado';
 
 export interface ProductItem {
   id: string;
@@ -27,7 +27,7 @@ export interface Appointment {
 }
 
 export interface Barber {
-  id: string;
+  id: number;
   name: string;
   nickname?: string;
   avatar: string;
@@ -74,7 +74,7 @@ export interface HeatmapCell {
 }
 
 export interface ServiceCatalog {
-  id: string;
+  id: number;
   name: string;
   durationMinutes: number;
   price: number;

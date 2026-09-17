@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Appointment,
   AppointmentStatus
-} from '../types/barber';
+} from '../types/barber_new';
 import {
   Clock,
   User,
@@ -19,10 +19,11 @@ import {
 
 interface LiveAppointmentsListProps {
   appointments: Appointment[];
-  onStatusChange: (id: string, newStatus: AppointmentStatus) => void;
+  onStatusChange: (id: number, newStatus: AppointmentStatus) => void;
   onSelectAppointment: (appointment: Appointment) => void;
   onNotifyWhatsApp: (appointment: Appointment) => void;
 }
+
 
 export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
   appointments,
@@ -30,16 +31,18 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
   onSelectAppointment,
   onNotifyWhatsApp
 }) => {
-  const [filterStatus, setFilterStatus] = useState<string>('todos');
+  const [filterStatus, setFilterStatus] = useState<'todos' | AppointmentStatus>('todos');
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredAppointments = appointments.filter((apt) => {
     const matchesFilter =
       filterStatus === 'todos' ? true : apt.status === filterStatus;
+
     const matchesSearch =
-      apt.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      apt.barberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      apt.service.toLowerCase().includes(searchTerm.toLowerCase());
+      (apt.clientName ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (apt.barberName ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (apt.service ?? '').toLowerCase().includes(searchTerm.toLowerCase());
+
     return matchesFilter && matchesSearch;
   });
 
@@ -85,7 +88,8 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
 
   return (
     <div className="p-5 rounded-2xl bg-zinc-900/90 border border-zinc-800/90 shadow-xl flex flex-col justify-between h-full">
-      {/* Header & Controls */}
+      
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -104,7 +108,7 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
           </p>
         </div>
 
-        {/* Filter Tabs & Search */}
+        {/* Search + Filter */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -127,7 +131,7 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setFilterStatus(tab.id)}
+                onClick={() => setFilterStatus(tab.id as 'todos' | AppointmentStatus)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                   filterStatus === tab.id
                     ? 'bg-emerald-500 text-zinc-950 font-bold shadow-md shadow-emerald-500/20'
@@ -141,7 +145,7 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
         </div>
       </div>
 
-      {/* Table Container */}
+      {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-950/50">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
@@ -154,6 +158,7 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
               <th className="py-3 px-4 text-right">Ações Rápidas</th>
             </tr>
           </thead>
+
           <tbody className="divide-y divide-zinc-800/60">
             {filteredAppointments.length === 0 ? (
               <tr>
@@ -172,9 +177,9 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                   <td className="py-3.5 px-4 font-mono font-bold text-zinc-200 whitespace-nowrap">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span>{apt.time}</span>
+                      <span>{apt.time ?? ''}</span>
                       <span className="text-[10px] text-zinc-500 font-normal">
-                        ({apt.endTime})
+                        ({apt.endTime ?? ''})
                       </span>
                     </div>
                   </td>
@@ -185,7 +190,7 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                       {apt.clientAvatar ? (
                         <img
                           src={apt.clientAvatar}
-                          alt={apt.clientName}
+                          alt={apt.clientName ?? ''}
                           className="w-8 h-8 rounded-lg object-cover ring-1 ring-zinc-700 shrink-0"
                         />
                       ) : (
@@ -193,11 +198,13 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                           <User className="w-4 h-4" />
                         </div>
                       )}
+
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
                           <p className="font-bold text-zinc-100 truncate group-hover:text-emerald-400 transition-colors">
-                            {apt.clientName}
+                            {apt.clientName ?? ''}
                           </p>
+
                           {apt.clientIsVip && (
                             <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-extrabold flex items-center gap-0.5 shrink-0 border border-emerald-500/30">
                               <Sparkles className="w-2.5 h-2.5" />
@@ -205,21 +212,24 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                             </span>
                           )}
                         </div>
+
                         <p className="text-[10px] text-zinc-400 font-mono">
-                          {apt.clientPhone}
+                          {apt.clientPhone ?? ''}
                         </p>
                       </div>
                     </div>
                   </td>
 
-                  {/* Serviço & Preço */}
+                  {/* Serviço */}
                   <td className="py-3.5 px-4">
                     <div>
-                      <p className="font-medium text-zinc-200">{apt.service}</p>
+                      <p className="font-medium text-zinc-200">{apt.service ?? ''}</p>
+
                       <div className="flex items-center gap-2 text-[10px] text-zinc-400 mt-0.5">
                         <span className="font-mono font-bold text-emerald-400">
-                          R$ {apt.servicePrice.toFixed(2)}
+                          R$ {(apt.servicePrice ?? 0).toFixed(2)}
                         </span>
+
                         {apt.products && apt.products.length > 0 && (
                           <span className="px-1.5 py-0.5 rounded bg-zinc-800 text-cyan-300 font-mono">
                             +{apt.products.length} itens extra
@@ -233,32 +243,32 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-2">
                       <img
-                        src={apt.barberAvatar}
-                        alt={apt.barberName}
+                        src={apt.barberAvatar ?? ''}
+                        alt={apt.barberName ?? ''}
                         className="w-7 h-7 rounded-lg object-cover ring-1 ring-zinc-700"
                       />
                       <span className="font-semibold text-zinc-300">
-                        {apt.barberName}
+                        {apt.barberName ?? ''}
                       </span>
                     </div>
                   </td>
 
-                  {/* Status Badge */}
+                  {/* Status */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     {getStatusBadge(apt.status)}
                   </td>
 
-                  {/* Action Buttons */}
+                  {/* Ações */}
                   <td
                     className="py-3.5 px-4 text-right whitespace-nowrap"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-end gap-1.5">
+
                       {apt.status === 'aguardando' && (
                         <button
                           onClick={() => onStatusChange(apt.id, 'ativo')}
                           className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-[11px] flex items-center gap-1 shadow-md shadow-emerald-500/20 transition-all"
-                          title="Iniciar atendimento agora"
                         >
                           <Play className="w-3 h-3 fill-zinc-950" />
                           <span>Iniciar</span>
@@ -269,7 +279,6 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                         <button
                           onClick={() => onStatusChange(apt.id, 'concluido')}
                           className="px-2.5 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-[11px] flex items-center gap-1 shadow-md shadow-cyan-500/20 transition-all"
-                          title="Finalizar e encerrar comanda"
                         >
                           <Check className="w-3.5 h-3.5 stroke-[3]" />
                           <span>Concluir</span>
@@ -280,7 +289,6 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                         <button
                           onClick={() => onStatusChange(apt.id, 'faltou')}
                           className="p-1.5 rounded-lg bg-zinc-800 hover:bg-rose-500/20 text-zinc-400 hover:text-rose-400 border border-zinc-700/50 transition-colors"
-                          title="Marcar como No-Show (Faltou)"
                         >
                           <UserX className="w-3.5 h-3.5" />
                         </button>
@@ -289,7 +297,6 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                       <button
                         onClick={() => onNotifyWhatsApp(apt)}
                         className="p-1.5 rounded-lg bg-zinc-800 hover:bg-emerald-500/20 text-zinc-400 hover:text-emerald-400 border border-zinc-700/50 transition-colors"
-                        title="Enviar lembrete via WhatsApp"
                       >
                         <Phone className="w-3.5 h-3.5" />
                       </button>
@@ -297,10 +304,10 @@ export const LiveAppointmentsList: React.FC<LiveAppointmentsListProps> = ({
                       <button
                         onClick={() => onSelectAppointment(apt)}
                         className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/50 transition-colors"
-                        title="Ver Comanda Completa"
                       >
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
+
                     </div>
                   </td>
                 </tr>

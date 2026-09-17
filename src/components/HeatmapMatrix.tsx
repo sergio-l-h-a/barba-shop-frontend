@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { heatmapData } from '../data/mockData';
+import { useHeatmap } from '../hooks/useHeatmap';
+
 import { HeatmapCell } from '../types/barber';
 import { Flame, Info, Sparkles, TrendingUp } from 'lucide-react';
 
 export const HeatmapMatrix: React.FC = () => {
   const [hoveredCell, setHoveredCell] = useState<HeatmapCell | null>(null);
+  const { data: heatmapData, loading, error } = useHeatmap();
 
   const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
   const hours = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'];

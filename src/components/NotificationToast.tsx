@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { CheckCircle2, AlertTriangle, X, Info } from 'lucide-react';
-
 export interface ToastProps {
   id: string;
   type?: 'success' | 'warning' | 'info';

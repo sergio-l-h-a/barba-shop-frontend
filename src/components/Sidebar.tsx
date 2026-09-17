@@ -16,7 +16,7 @@ import {
   ChevronRight,
   ShieldCheck
 } from 'lucide-react';
-import { BarbershopBranch } from '../types/barber';
+import { BarbershopBranch } from '../types/barber_new';
 
 interface SidebarProps {
   activeTab: string;
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     Unidade Ativa
                   </p>
                   <p className="text-xs font-semibold text-zinc-100 truncate">
-                    {selectedBranch.name}
+                    {selectedBranch.nome}
                   </p>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         : 'text-zinc-300 hover:bg-zinc-800/80 hover:text-zinc-100'
                     }`}
                   >
-                    <span className="truncate">{branch.name}</span>
+                    <span className="truncate">{branch.nome}</span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono">
                       {branch.chairsActive} cadeiras
                     </span>
@@ -163,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="py-2 flex justify-center">
             <div
               className="p-2 rounded-xl bg-zinc-900 border border-zinc-800 text-emerald-400"
-              title={selectedBranch.name}
+              title={selectedBranch.nome}
             >
               <Building2 className="w-4 h-4" />
             </div>

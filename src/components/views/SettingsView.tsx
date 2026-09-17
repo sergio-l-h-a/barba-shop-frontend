@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+
 import { Settings, Bell, MessageSquare, Shield, Check } from 'lucide-react';
+import { useSettings } from '@/hooks/useSettings';
 
 export const SettingsView: React.FC = () => {
-  const [whatsappReminder, setWhatsappReminder] = useState(true);
-  const [autoReceipt, setAutoReceipt] = useState(true);
-  const [darkThemeGlow, setDarkThemeGlow] = useState(true);
+  const { settings, loading, update } = useSettings();
+
+  if (loading) {
+    return <div className="text-zinc-400">Carregando configurações...</div>;
+  }
+
+  if (!settings) {
+    return <div className="text-zinc-400">Erro ao carregar configurações.</div>;
+  }
+
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -31,17 +39,18 @@ export const SettingsView: React.FC = () => {
             </p>
           </div>
           <button
-            onClick={() => setWhatsappReminder(!whatsappReminder)}
+            onClick={() => update({ whatsappReminder: !settings.whatsappReminder })}
             className={`w-12 h-6 rounded-full transition-colors relative p-1 shrink-0 ${
-              whatsappReminder ? 'bg-emerald-500' : 'bg-zinc-800'
+              settings.whatsappReminder ? 'bg-emerald-500' : 'bg-zinc-800'
             }`}
           >
             <span
               className={`w-4 h-4 rounded-full bg-zinc-950 transition-transform block ${
-                whatsappReminder ? 'translate-x-6' : 'translate-x-0'
+                settings.whatsappReminder ? 'translate-x-6' : 'translate-x-0'
               }`}
             />
           </button>
+
         </div>
 
         {/* Comanda Digital & Recibo PIX */}
@@ -56,14 +65,14 @@ export const SettingsView: React.FC = () => {
             </p>
           </div>
           <button
-            onClick={() => setAutoReceipt(!autoReceipt)}
+            onClick={() => update({ autoReceipt: !settings.autoReceipt })}
             className={`w-12 h-6 rounded-full transition-colors relative p-1 shrink-0 ${
-              autoReceipt ? 'bg-emerald-500' : 'bg-zinc-800'
+              settings.autoReceipt ? 'bg-emerald-500' : 'bg-zinc-800'
             }`}
           >
             <span
               className={`w-4 h-4 rounded-full bg-zinc-950 transition-transform block ${
-                autoReceipt ? 'translate-x-6' : 'translate-x-0'
+                settings.autoReceipt ? 'translate-x-6' : 'translate-x-0'
               }`}
             />
           </button>
@@ -81,17 +90,18 @@ export const SettingsView: React.FC = () => {
             </p>
           </div>
           <button
-            onClick={() => setDarkThemeGlow(!darkThemeGlow)}
+            onClick={() => update({ darkThemeGlow: !settings.darkThemeGlow })}
             className={`w-12 h-6 rounded-full transition-colors relative p-1 shrink-0 ${
-              darkThemeGlow ? 'bg-emerald-500' : 'bg-zinc-800'
+              settings.darkThemeGlow ? 'bg-emerald-500' : 'bg-zinc-800'
             }`}
           >
             <span
               className={`w-4 h-4 rounded-full bg-zinc-950 transition-transform block ${
-                darkThemeGlow ? 'translate-x-6' : 'translate-x-0'
+                settings.darkThemeGlow ? 'translate-x-6' : 'translate-x-0'
               }`}
             />
           </button>
+
         </div>
 
         <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-center gap-2">

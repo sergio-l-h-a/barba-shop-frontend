@@ -9,14 +9,16 @@ import {
   CartesianGrid,
   Cell
 } from 'recharts';
-import { mockBarbers } from '../data/mockData';
+import { useBarberPerformance } from '../hooks/useBarberPerformance';
+
 import { Scissors, Star, DollarSign, Users, Award } from 'lucide-react';
 
 export const BarberPerformanceChart: React.FC = () => {
   const [metric, setMetric] = useState<'revenue' | 'appointments' | 'rating'>('revenue');
-
+  const { data: barbers, loading, error } = useBarberPerformance();
+  
   // Format data for chart
-  const chartData = mockBarbers.map((b) => ({
+  const chartData = barbers.map((b) => ({
     name: b.name.split(' ')[0] + ' ' + (b.nickname || ''),
     fullName: b.name,
     avatar: b.avatar,
@@ -75,6 +77,9 @@ export const BarberPerformanceChart: React.FC = () => {
     }
     return null;
   };
+  
+  if (loading) return <div>Carregando desempenho...</div>;
+  if (error) return <div>Erro ao carregar: {error}</div>;
 
   return (
     <div className="p-5 rounded-2xl bg-zinc-900/90 border border-zinc-800/90 shadow-xl flex flex-col justify-between h-full">
@@ -186,7 +191,7 @@ export const BarberPerformanceChart: React.FC = () => {
 
       {/* Barber Cards Mini List */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 pt-3 border-t border-zinc-800/80">
-        {mockBarbers.map((b, idx) => (
+        {barbers.map((b, idx) => (
           <div
             key={b.id}
             className="p-2 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center gap-2"

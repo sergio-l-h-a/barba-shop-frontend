@@ -9,11 +9,11 @@ import {
   Settings as SettingsIcon,
   LogOut
 } from 'lucide-react';
-import { NotificationItem, BarbershopBranch } from '../types/barber';
+import { NotificationItem, BarbershopBranch } from '../types/barber_new';
 
 interface HeaderProps {
   notifications: NotificationItem[];
-  onMarkNotificationRead: (id: string) => void;
+  onMarkNotificationRead: (id: number) => void;
   selectedBranch: BarbershopBranch;
   onOpenMobileMenu: () => void;
   searchQuery: string;

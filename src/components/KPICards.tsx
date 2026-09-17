@@ -20,9 +20,10 @@ export const KPICards: React.FC<KPICardsProps> = ({
   todayAppointmentsCount,
   totalSlotsToday
 }) => {
-  const percentageToday = Math.round(
-    (todayAppointmentsCount / totalSlotsToday) * 100
-  );
+  const percentageToday = totalSlotsToday > 0
+  ? Math.round((todayAppointmentsCount / totalSlotsToday) * 100)
+  : 0;
+
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
